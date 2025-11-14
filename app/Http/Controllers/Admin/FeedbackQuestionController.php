@@ -14,13 +14,14 @@ class FeedbackQuestionController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-        $questions = FeedbackQuestion::latest()->get();
-       
-        return response()->json(['questions' => $questions]);
+        return view('admin.questions.index');
     }
-     
-    return view('admin.questions.index');
+
+    public function questionResponse(Request $request)
+    {
+        $questions = FeedbackQuestion::latest()->get();
+
+        return response()->json(['questions' => $questions]);
     }
 
 
@@ -68,10 +69,10 @@ class FeedbackQuestionController extends Controller
     }
 
 
-   
+
     public function answers(Request $request)
     {
-         $responses = FeedbackAnswer::with(['user', 'feedBackQuestion'])
+        $responses = FeedbackAnswer::with(['user', 'feedBackQuestion'])
             ->latest()
             ->get()
             ->groupBy('user_id'); // group answers by user
@@ -81,14 +82,14 @@ class FeedbackQuestionController extends Controller
 
     public function showSingleResponse(Request $request, $userId)
     {
-         $userAnswer = FeedbackAnswer::with(['user', 'feedbackQuestion'])
+        $userAnswer = FeedbackAnswer::with(['user', 'feedbackQuestion'])
             ->where('user_id', $userId)
             ->latest()
             ->get()
             ->first();
-            //dd($userAnswer);
-            
- // group answers by user
+        //dd($userAnswer);
+
+        // group answers by user
 
         return view('feedback.userResponse', compact('userAnswer'));
     }

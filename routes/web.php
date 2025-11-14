@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\FeedbackQuestion;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FeedbackController;
@@ -10,42 +9,60 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User Feedback
     Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::post('/feedback/submit', [FeedbackController::class, 'submit'])->name('feedback.submit');
 
+    // View own submitted feedback
+    Route::get('user-response/{user}', [FeedbackQuestionController::class, 'showSingleResponse'])
+        ->name('feedback.responses.show');
 });
-Route::get('/questions', [FeedbackQuestionController::class, 'index'])->name('admin.questions.index');
-Route::post('admin/questions', [FeedbackQuestionController::class, 'store'])->name('admin.questions.store');
-Route::get('admin/questions/{question}', [FeedbackQuestionController::class, 'show'])->name('admin.questions.show');
-Route::put('admin/questions/{question}', [FeedbackQuestionController::class, 'update'])->name('admin.questions.update');
-Route::delete('admin/questions/{question}', [FeedbackQuestionController::class, 'destroy'])->name('admin.questions.destroy');
 
 
-Route::get('user-response/{user}', [FeedbackQuestionController::class, 'showSingleResponse'])->name('feedback.responses.show');
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'is_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-// Admin routes
-Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('questions', [FeedbackQuestionController::class, 'index'])->name('admin.questions.index');
-   
-    Route::get('questions/list', function () {
-        return FeedbackQuestion::latest()->get();
-    })->name('admin.questions.list');
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-  
-    Route::resource('feedback-questions', FeedbackQuestionController::class)->except(['create', 'edit']);
-    
-    Route::get('feedback-answers', [FeedbackQuestionController::class, 'answers'])->name('feedback.answers');
+        Route::get('/', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-});
+        // Feedback Questions CRUD
+        Route::resource('questions', FeedbackQuestionController::class);
+        Route::get('question/responses', [FeedbackQuestionController::class, 'questionResponse'])
+            ->name('questions.response');
+        // View all users' feedback
+        Route::get('feedback-answers', [FeedbackQuestionController::class, 'answers'])
+            ->name('feedback.answers');
+    });
+
 
 require __DIR__ . '/auth.php';

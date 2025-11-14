@@ -1,10 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container mx-auto p-6">
+    @if(auth()->user()->is_admin)
     <h1 class="text-2xl font-semibold mb-4">
         Feedback from {{ $userAnswer->user->name }}
     </h1>
+    @else
+    <h1 class="text-2xl font-semibold mb-4">
+         Your Response
+    </h1>
+    @endif
+
+    
+     <!-- $userAnswer -->
+
 
     @if(!$userAnswer)
         <div class="alert alert-info">
@@ -31,12 +42,14 @@
            
         </div>
     @endif
-
+@if(auth()->user()->is_admin)
     <div class="mt-6">
         <a href="{{ route('admin.feedback.answers') }}" 
            class="inline-block text-indigo-600 hover:underline">
            ← Back to All Responses
         </a>
     </div>
+    @endif
 </div>
+
 @endsection

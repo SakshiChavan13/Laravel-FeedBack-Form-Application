@@ -15,43 +15,46 @@
                         <label class="block font-medium text-gray-700 mb-1">
                             {{ $q->title }}
                         </label>
-                        <input type="hidden" name="answers[{{ $q->id }}][feedback_question_id]" value="{{ $q->id }}">
+                        <input type="hidden" name="answers[{{ $q->id }}][question_id]" value="{{ $q->id }}">
 
                         @switch($q->type)
-    @case('text')
-        <input type="text"
-               name="answers[{{ $q->id }}][answer]"
-               class="form-control"
-               placeholder="Type your answer here...">
-        @break
+                            @case('text')
+                                <input type="text"
+                                       name="answers[{{ $q->id }}][answer]"
+                                       class="form-control w-full rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                       placeholder="Type your answer here...">
+                                @break
 
-    @case('textarea')
-        <textarea name="answers[{{ $q->id }}][answer]"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Type your answer here..."></textarea>
-        @break
+                            @case('textarea')
+                                <textarea name="answers[{{ $q->id }}][answer]"
+                                          class="form-control w-full rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                          rows="2"
+                                          placeholder="Type your answer here..."></textarea>
+                                @break
 
-    @case('rating')
-        <div class="rating-group">
-            @for($i = 1; $i <= 5; $i++)
-                <label style="margin-right: 10px;">
-                    <input type="radio"
-                           name="answers[{{ $q->id }}][answer]"
-                           value="{{ $i }}">
-                    {{ $i }} ⭐
-                </label>
-            @endfor
-        </div>
-        @break
+                            @case('radio')
+                                <div>
+                                    <label><input type="radio" name="answers[{{ $q->id }}][answer]" value="Yes"> Yes</label>
+                                    <label class="ms-3"><input type="radio" name="answers[{{ $q->id }}][answer]" value="No"> No</label>
+                                </div>
+                                @break
 
-    @default
-        <input type="text"
-               name="answers[{{ $q->id }}][answer]"
-               class="form-control"
-               placeholder="Type your answer here...">
-@endswitch
+                            @case('select')
+                                <select name="answers[{{ $q->id }}][answer]" class="form-control">
+                                    <option value="">Select...</option>
+                                    <option value="Excellent">Excellent</option>
+                                    <option value="Good">Good</option>
+                                    <option value="Average">Average</option>
+                                    <option value="Poor">Poor</option>
+                                </select>
+                                @break
 
+                            @default
+                                <textarea name="answers[{{ $q->id }}][answer]"
+                                          class="form-control w-full rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                          rows="2"
+                                          placeholder="Type your answer here..."></textarea>
+                        @endswitch
                     </div>
                 @endforeach
             </div>
