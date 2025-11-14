@@ -82,11 +82,15 @@ class FeedbackQuestionController extends Controller
 
     public function showSingleResponse(Request $request, $userId)
     {
-        $userAnswer = FeedbackAnswer::with(['user', 'feedbackQuestion'])
+        $userAnswers = FeedbackAnswer::with(['user', 'feedbackQuestion'])
             ->where('user_id', $userId)
-            ->latest()
+            ->orderBy('created_at', 'asc')
             ->get()
-            ->first();
+            ->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d H:i:s');
+            });
+
+        $userAnswer = $userAnswers->first();
         //dd($userAnswer);
 
         // group answers by user

@@ -11,7 +11,7 @@
         <table class="table table-bordered" id="questionsTable">
             <thead>
                 <tr>
-                    <th>ID</th>
+                   <th>Sr.No</th>
                     <th>Title</th>
                     <th>Type</th>
                     <th>Active</th>
@@ -67,16 +67,11 @@
 
 @push('scripts')
 <script>
-     console.log('Document ready executed');
+     
 $(document).ready(function () {
-    console.log('Document ready executed');
     
-    // Check if Bootstrap modal is available
-    if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
-        console.log('Bootstrap Modal is available');
-    } else {
-        console.error('Bootstrap Modal is not available');
-    }
+    
+    
 
     // Ensure Laravel detects AJAX
     $.ajaxSetup({
@@ -102,7 +97,7 @@ $(document).ready(function () {
            url: "{{ route('admin.questions.response') }}", // Use the proper route
             method: "GET",
             success: function (data) {
-                console.log('Questions fetched successfully:', data);
+               
                 let rows = "";
 
                 // Handle both formats - either data.questions or just data
@@ -140,14 +135,12 @@ $(document).ready(function () {
     // ---------------------------
     $("#questionForm").on("submit", function (e) {
         e.preventDefault();
-        console.log('Form submit triggered');
-
+       
         let id = $("#question_id").val();
         let url = id ? `/admin/questions/${id}` : `/admin/questions`;
         let method = id ? "PUT" : "POST";
 
-        console.log('Method:', method, 'URL:', url);
-
+     
         $.ajax({
             url: url,
             type: method,
@@ -159,7 +152,7 @@ $(document).ready(function () {
                 is_required: $("#is_required").is(":checked") ? 1 : 0
             },
             success: function (response) {
-                console.log('Question saved successfully:', response);
+              
                 $("#questionModal").modal("hide");
                 $("#questionForm")[0].reset();
                 $("#question_id").val("");
@@ -177,10 +170,10 @@ $(document).ready(function () {
     // ---------------------------
     $(document).on("click", ".edit-btn", function () {
         let id = $(this).data("id");
-        console.log('Edit button clicked for ID:', id);
+       
 
         $.get(`/admin/questions/${id}`, function (question) {
-            console.log('Question data for edit:', question);
+            
             $("#question_id").val(question.id);
             $("#title").val(question.title);
             $("#type").val(question.type);
@@ -202,8 +195,7 @@ $(document).ready(function () {
         if (!confirm("Are you sure?")) return;
 
         let id = $(this).data("id");
-        console.log('Delete button clicked for ID:', id);
-
+        
         $.ajax({
             url: `/admin/questions/${id}`,
             type: "DELETE",
@@ -221,14 +213,10 @@ $(document).ready(function () {
         });
     });
 
-    // Debug: Check if modal can be manually opened
-    $('#questionModal').on('shown.bs.modal', function () {
-        console.log('Modal opened successfully');
-    });
+  
 
     $('#questionModal').on('hidden.bs.modal', function () {
-        console.log('Modal closed');
-        // Reset modal to "Create" mode
+      
         $("#questionModalLabel").text("Create Question");
         $("#questionForm")[0].reset();
         $("#question_id").val("");
